@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import Counter from './features/counter/Counter';
 import './App.css';
+import Cards from './features/covid/Cards/Cards';
 
 const App: React.FC = () => {
   return (
@@ -51,6 +52,7 @@ const App: React.FC = () => {
           </a>
         </span>
       </header>
+      <Cards />
     </div>
   );
 };
