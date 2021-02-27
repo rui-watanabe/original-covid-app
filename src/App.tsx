@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import Counter from './features/counter/Counter';
 import './App.css';
 import Cards from './features/covid/Cards/Cards';
+import Chart from './features/covid/Chart/Chart';
 
 const App: React.FC = () => {
   return (
@@ -53,6 +54,7 @@ const App: React.FC = () => {
         </span>
       </header>
       <Cards />
+      <Chart />
     </div>
   );
 };
