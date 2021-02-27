@@ -5,29 +5,28 @@ module.exports = {
     jest: true,
   },
   extends: [
-    "plugin:react/recommended",
-    "airbnb",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
+    'plugin:react/recommended',
+    'airbnb',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
   ],
   globals: {
-    Atomics: "readonly",
-    SharedArrayBuffer: "readonly",
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
   },
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 2018,
-    sourceType: "module",
+    sourceType: 'module',
   },
-  plugins: ["react", "@typescript-eslint",
-  'prettier'],
+  plugins: ['react', '@typescript-eslint', 'prettier'],
   settings: {
-    "import/resolver": {
+    'import/resolver': {
       node: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
   },
@@ -44,7 +43,10 @@ module.exports = {
     'spaced-comment': ['error', 'always', { markers: ['/ <reference'] }],
     'prettier/prettier': 'error',
     'no-console': 'off',
-    'no-param-reassign': ["error", { "props": true, "ignorePropertyModificationsForRegex": ["state"] }]
-
+    'react/no-array-index-key': 'off',
+    'no-param-reassign': [
+      'error',
+      { props: true, ignorePropertyModificationsForRegex: ['state'] },
+    ],
   },
 };

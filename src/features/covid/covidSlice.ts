@@ -15,7 +15,8 @@ type covidState = {
 const initialState: covidState = {
   category: '',
   data: dataObject,
-};
+}
+;
 
 export const fetchAsyncGetDaily = createAsyncThunk(
   'covid/getDaily',
