@@ -2,19 +2,19 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { useSelector } from 'react-redux';
 import styles from './Chart.module.css';
-import { selectData } from '../covidSlice';
+import { selectCurrentData } from '../covidSlice';
 
 const Chart: React.FC = () => {
-  const dataList = useSelector(selectData);
-  const dates = dataList.map(({ date }) => date);
+  const currentDataList = useSelector(selectCurrentData);
+  const currentDataDates = currentDataList.map(({ date }) => date);
 
-  const lineChart = dataList[0] && (
+  const lineChart = currentDataList[0] && (
     <Line
       data={{
-        labels: dates.map((date) => new Date(date).toDateString()),
+        labels: currentDataDates.map((date) => new Date(date).toDateString()),
         datasets: [
           {
-            data: dataList.map((data) => Number(data.count)),
+            data: currentDataList.map((data) => Number(data.count)),
             label: '仮のタイトル',
             borderColor: '#3333ff',
             fill: true,
