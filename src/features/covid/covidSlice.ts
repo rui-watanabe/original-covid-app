@@ -43,8 +43,8 @@ const moldApi = (data: apiLatestType[]): covidDataState => {
   let jsonString = JSON.stringify(data);
   jsonString = jsonString.replace(/"日付":/g, '"date":');
   jsonString = jsonString.replace(
-    /"PCR\s検査陽性者数\(単日\)|重症者数|死亡者数|退院、療養解除となった者|入院治療を要する者|PCR\s検査実施件数\(単日\)":/g,
-    '"count":'
+    /PCR\s検査陽性者数\(単日\)|重症者数|死亡者数|退院、療養解除となった者|入院治療を要する者|PCR\s検査実施件数\(単日\)/g,
+    'count'
   );
   return JSON.parse(jsonString);
 };
@@ -63,7 +63,10 @@ export const fetchAsyncGetData = createAsyncThunk(
 export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
   async (argCategory: string) => {
-    let stateObject: covidLatestDataState;
+    const stateObject: covidLatestDataState = {
+      eachCategory: '',
+      latestCount: '',
+    };
     const filterCategoriesArray: string[] = await categoriesArray.filter(
       (category) => argCategory !== category
     );
