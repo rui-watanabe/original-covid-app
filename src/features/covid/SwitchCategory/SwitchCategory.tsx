@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { NativeSelect, FormControl } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { fetchAsyncGetData, fetchAsyncGetLatestData } from '../covidSlice';
-import categoriesArray from '../categoriesArray';
+import categoriesObject from '../categoriesObject.json';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 const SwitchCategory: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const categories = categoriesArray;
+  const categories = Object.values(categoriesObject);
 
   return (
     <FormControl className={classes.formControl}>

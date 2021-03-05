@@ -3,7 +3,7 @@ import axios from 'axios';
 import { RootState } from '../../app/store';
 import dataObject from './dataObject.json';
 import dataLatestObject from './dataLatestObject.json';
-import categoriesArray from './categoriesArray';
+import categoriesObject from './categoriesObject.json';
 
 const apiUrl = 'https://api.opendata.go.jp/mhlw';
 
@@ -64,6 +64,7 @@ export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
   async (argCategory: string) => {
     let stateObject: covidLatestDataState;
+    const categoriesArray = Object.keys(categoriesObject);
     const filterCategoriesArray: string[] = await categoriesArray.filter(
       (category) => argCategory !== category
     );
