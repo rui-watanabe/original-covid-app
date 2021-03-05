@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { NativeSelect, FormControl } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { fetchAsyncGetData } from '../covidSlice';
+import { fetchAsyncGetData, fetchAsyncGetLatestData } from '../covidSlice';
 import categoriesArray from '../categoriesArray';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,9 +20,10 @@ const SwitchCategory: React.FC = () => {
   return (
     <FormControl className={classes.formControl}>
       <NativeSelect
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-          dispatch(fetchAsyncGetData(e.target.value))
-        }
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          dispatch(fetchAsyncGetData(e.target.value));
+          dispatch(fetchAsyncGetLatestData(e.target.value));
+        }}
       >
         {categories.map((category, i) => (
           <option key={i} value={category}>
