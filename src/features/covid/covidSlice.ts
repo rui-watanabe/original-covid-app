@@ -63,25 +63,24 @@ export const fetchAsyncGetData = createAsyncThunk(
 export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
   async (argCategory: string) => {
-    const stateObject: covidLatestDataState = {
-      eachCategory: '',
-      latestCount: '',
-    };
+    let stateObject: covidLatestDataState;
     const filterCategoriesArray: string[] = await categoriesArray.filter(
       (category) => argCategory !== category
     );
-    const stateList: Promise<covidLatestDataState>[] = await filterCategoriesArray.map(
+    const retStateList: Promise<covidLatestDataState>[] = await filterCategoriesArray.map(
       async (category) => {
         const { data } = await axios.get<apiLatestType[]>(
           `${apiUrl}/${category}?apikey=${process.env.REACT_APP_API_KEY}`
         );
         const moldData: covidDataState = moldApi(data.splice(-1, 1));
-        stateObject.eachCategory = category;
-        stateObject.latestCount = moldData[0].count;
+        stateObject = {
+          eachCategory: category,
+          latestCount: moldData[0].count,
+        };
         return stateObject;
       }
     );
-    console.log(stateList);
+    const stateList = await Promise.all(retStateList);
     return { stateList };
   }
 );
