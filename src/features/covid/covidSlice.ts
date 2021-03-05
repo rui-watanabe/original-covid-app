@@ -93,14 +93,14 @@ const covidSlice = createSlice({
     builder.addCase(fetchAsyncGetData.fulfilled, (state, action) => {
       return {
         ...state,
-        category: action.payload.category,
-        data: action.payload.data,
+        currentCategory: action.payload.category,
+        currentData: action.payload.data,
       };
     });
     builder.addCase(fetchAsyncGetLatestData.fulfilled, (state, action) => {
       return {
         ...state,
-        latestData: action.payload.stateList,
+        latestDataList: action.payload.stateList,
       };
     });
   },
