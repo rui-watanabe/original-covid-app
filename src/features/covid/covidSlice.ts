@@ -70,7 +70,7 @@ export const fetchAsyncGetData = createAsyncThunk(
   'covid/getData',
   async (category: categoriesType) => {
     const { data } = await axios.get<covidDataLatestObject[]>(
-      `${apiUrl}/${category}?apikey=${process.env.REACT_APP_API_KEY}`
+      `${apiUrl}/${category}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
     );
     console.log(data);
     const moldData: covidDataObject = moldApi(data.splice(-14, 14));
@@ -87,7 +87,7 @@ export const fetchAsyncGetLatestData = createAsyncThunk(
     const retStateList: Promise<latestDataState>[] = filterCategoriesArray.map(
       async (mapCategory: categoriesType) => {
         const { data } = await axios.get<covidDataLatestObject[]>(
-          `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_API_KEY}`
+          `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
         );
         const moldData: covidDataObject = moldApi(data.splice(-1, 1));
         const stateObject: latestDataState = {
