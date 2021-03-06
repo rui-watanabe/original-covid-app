@@ -7,7 +7,7 @@ import { Card, CardContent, Typography, Grid } from '@material-ui/core';
 import { MdLocalHospital } from 'react-icons/md';
 // import { AiFillLike } from 'react-icons/ai';
 // import { useSelector } from 'react-redux';
-// import styles from './Cards.module.css';
+import styles from './Cards.module.css';
 // import { selectLatestDataList } from '../covidSlice';
 
 type CardProps = {
@@ -17,9 +17,11 @@ type CardProps = {
 };
 
 const CardInfo = ({ category, count, propStyle }: CardProps): JSX.Element => {
+  console.log(category);
+  console.log(propStyle);
   return (
-    <Grid container spacing={1} justify="center">
-      <Grid item xs={12} md={3} component={Card} className={propStyle}>
+    <>
+      <Grid item xs={12} md={3} component={Card} className={styles[propStyle]}>
         <CardContent>
           <Typography color="textSecondary" gutterBottom>
             <MdLocalHospital />
@@ -121,7 +123,7 @@ const CardInfo = ({ category, count, propStyle }: CardProps): JSX.Element => {
           </Typography>
         </CardContent>
       </Grid> */}
-    </Grid>
+    </>
   );
 };
 export default CardInfo;
