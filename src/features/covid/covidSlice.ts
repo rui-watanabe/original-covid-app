@@ -2,34 +2,32 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../../app/store';
 import dataObject from './dataObject.json';
-import dataLatestObject from './dataLatestObject.json';
 import categoriesObject from './categoriesObject.json';
+import dataLatestObject from './dataLatestObject.json';
 
 const apiUrl = 'https://api.opendata.go.jp/mhlw';
 
-type covidDataState = typeof dataObject;
+type covidDataObject = typeof dataObject;
 type categoriesObjectType = typeof categoriesObject;
-type categoriesType = keyof categoriesObjectType;
+type covidDataLatestObject = typeof dataLatestObject;
 
-type covidLatestDataState = {
+export type categoriesType = keyof categoriesObjectType;
+
+type latestDataState = {
   eachCategory: categoriesType;
   latestCount: string;
 };
-type covidLatestDataListState = covidLatestDataState[];
+type latestDataListType = latestDataState[];
 
 type covidState = {
   currentCategory: categoriesType;
-  currentData: covidDataState;
-  latestDataList: covidLatestDataListState;
+  currentData: covidDataObject;
+  latestDataList: latestDataListType;
 };
 
-type apiLatestType =
-  | typeof dataLatestObject[0]
-  | typeof dataLatestObject[1]
-  | typeof dataLatestObject[2]
-  | typeof dataLatestObject[3]
-  | typeof dataLatestObject[4]
-  | typeof dataLatestObject[5];
+export const categoriesArray = Object.keys(
+  categoriesObject
+) as (keyof typeof categoriesObject)[];
 
 const initialState: covidState = {
   currentCategory: 'positive-cases',
@@ -58,7 +56,7 @@ const initialState: covidState = {
   ],
 };
 
-const moldApi = (data: apiLatestType[]): covidDataState => {
+const moldApi = (data: covidDataLatestObject[]): covidDataObject => {
   let jsonString = JSON.stringify(data);
   jsonString = jsonString.replace(/"日付":/g, '"date":');
   jsonString = jsonString.replace(
@@ -71,10 +69,11 @@ const moldApi = (data: apiLatestType[]): covidDataState => {
 export const fetchAsyncGetData = createAsyncThunk(
   'covid/getData',
   async (category: categoriesType) => {
-    const { data } = await axios.get<apiLatestType[]>(
+    const { data } = await axios.get<covidDataLatestObject[]>(
       `${apiUrl}/${category}?apikey=${process.env.REACT_APP_API_KEY}`
     );
-    const moldData: covidDataState = moldApi(data.splice(-14, 14));
+    console.log(data);
+    const moldData: covidDataObject = moldApi(data.splice(-14, 14));
     return { category, data: moldData };
   }
 );
@@ -82,20 +81,16 @@ export const fetchAsyncGetData = createAsyncThunk(
 export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
   async (argCategory: categoriesType) => {
-    let stateObject: covidLatestDataState;
-    const categoriesArray = Object.keys(
-      categoriesObject
-    ) as (keyof typeof categoriesObject)[];
     const filterCategoriesArray = categoriesArray.filter(
       (filterCategory) => argCategory !== filterCategory
     );
-    const retStateList: Promise<covidLatestDataState>[] = filterCategoriesArray.map(
+    const retStateList: Promise<latestDataState>[] = filterCategoriesArray.map(
       async (mapCategory: categoriesType) => {
-        const { data } = await axios.get<apiLatestType[]>(
+        const { data } = await axios.get<covidDataLatestObject[]>(
           `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_API_KEY}`
         );
-        const moldData: covidDataState = moldApi(data.splice(-1, 1));
-        stateObject = {
+        const moldData: covidDataObject = moldApi(data.splice(-1, 1));
+        const stateObject: latestDataState = {
           eachCategory: mapCategory,
           latestCount: moldData[0].count,
         };
@@ -132,13 +127,12 @@ export const selectCurrentCategory: (state: RootState) => categoriesType = (
   state
 ) => state.covid.currentCategory;
 
-export const selectCurrentData: (state: RootState) => covidDataState = (
+export const selectCurrentData: (state: RootState) => covidDataObject = (
   state: RootState
 ) => state.covid.currentData;
 
-export const selectLatestDataList: (
+export const selectLatestDataList: (state: RootState) => latestDataListType = (
   state: RootState
-) => covidLatestDataListState = (state: RootState) =>
-  state.covid.latestDataList;
+) => state.covid.latestDataList;
 
 export default covidSlice.reducer;
