@@ -37,16 +37,17 @@ const DashBoard: React.FC = () => {
 
   return (
     <div>
-      <AppBar position="absolute">
+      <AppBar position="absolute" color="default">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Covid 19 Live DashBoard
+            全国コロナ感染者 ライブダッシュボード
           </Typography>
           <div>
             <Typography variant="body1">
               {new Date(
                 currentDataList[currentDataList.length - 1].date
-              ).toDateString()}
+              ).toLocaleDateString()}
+              更新
             </Typography>
           </div>
         </Toolbar>

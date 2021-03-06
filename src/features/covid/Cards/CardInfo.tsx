@@ -1,28 +1,32 @@
 import React from 'react';
 import CountUp from 'react-countup';
 import { Card, CardContent, Typography, Grid } from '@material-ui/core';
-// import { GiHastyGrave, GiGraveFlowers } from 'react-icons/gi';
-// import { FcInspection } from 'react-icons/fc';
-// import { BiBed } from 'react-icons/bi';
-import { MdLocalHospital } from 'react-icons/md';
-// import { AiFillLike } from 'react-icons/ai';
-// import { useSelector } from 'react-redux';
+import CardIcon from './CardIcon';
 import styles from './Cards.module.css';
-// import { selectLatestDataList } from '../covidSlice';
 
-type CardProps = {
+type CardInfoProps = {
   category: string;
   count: string;
-  propStyle: string;
+  categoryKey: string;
 };
 
-const CardInfo = ({ category, count, propStyle }: CardProps): JSX.Element => {
+const CardInfo = ({
+  category,
+  count,
+  categoryKey,
+}: CardInfoProps): JSX.Element => {
   return (
     <>
-      <Grid item xs={12} md={3} component={Card} className={styles[propStyle]}>
+      <Grid
+        item
+        xs={12}
+        md={3}
+        component={Card}
+        className={styles[categoryKey]}
+      >
         <CardContent>
           <Typography color="textSecondary" gutterBottom>
-            <MdLocalHospital />
+            <CardIcon categoryKey={categoryKey} />
             {category}
           </Typography>
           <Typography variant="h5">
@@ -32,6 +36,7 @@ const CardInfo = ({ category, count, propStyle }: CardProps): JSX.Element => {
               duration={1.5}
               separator=","
             />
+            人
           </Typography>
         </CardContent>
       </Grid>

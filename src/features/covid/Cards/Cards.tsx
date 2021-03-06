@@ -18,7 +18,7 @@ const Cards: React.FC = () => {
                 key={index}
                 category={categoriesObject[data.eachCategory]}
                 count={data.latestCount}
-                propStyle={data.eachCategory}
+                categoryKey={data.eachCategory}
               />
             );
           }
