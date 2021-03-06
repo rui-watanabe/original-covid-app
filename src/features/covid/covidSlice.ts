@@ -8,8 +8,11 @@ import categoriesObject from './categoriesObject.json';
 const apiUrl = 'https://api.opendata.go.jp/mhlw';
 
 type covidDataState = typeof dataObject;
+type categoriesObjectType = typeof categoriesObject;
+type categoriesType = keyof categoriesObjectType;
+
 type covidLatestDataState = {
-  eachCategory: string;
+  eachCategory: categoriesType;
   latestCount: string;
 };
 type covidLatestDataListState = covidLatestDataState[];
@@ -33,7 +36,7 @@ const initialState: covidState = {
   currentData: dataObject,
   latestDataList: [
     {
-      eachCategory: '',
+      eachCategory: 'positive-cases',
       latestCount: '0',
     },
   ],
@@ -62,20 +65,22 @@ export const fetchAsyncGetData = createAsyncThunk(
 
 export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
-  async (argCategory: string) => {
+  async (argCategory: categoriesType) => {
     let stateObject: covidLatestDataState;
-    const categoriesArray = Object.keys(categoriesObject);
-    const filterCategoriesArray: string[] = await categoriesArray.filter(
-      (category) => argCategory !== category
+    const categoriesArray = Object.keys(
+      categoriesObject
+    ) as (keyof typeof categoriesObject)[];
+    const filterCategoriesArray = await categoriesArray.filter(
+      (filterCategory) => argCategory !== filterCategory
     );
     const retStateList: Promise<covidLatestDataState>[] = await filterCategoriesArray.map(
-      async (category) => {
+      async (mapCategory: categoriesType) => {
         const { data } = await axios.get<apiLatestType[]>(
-          `${apiUrl}/${category}?apikey=${process.env.REACT_APP_API_KEY}`
+          `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_API_KEY}`
         );
         const moldData: covidDataState = moldApi(data.splice(-1, 1));
         stateObject = {
-          eachCategory: category,
+          eachCategory: mapCategory,
           latestCount: moldData[0].count,
         };
         return stateObject;

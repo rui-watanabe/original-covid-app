@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 import styles from './Cards.module.css';
 import { selectLatestDataList } from '../covidSlice';
 import CardInfo from './CardInfo';
+import categoriesObject from '../categoriesObject.json';
 
 const Cards: React.FC = () => {
   const latestDataList = useSelector(selectLatestDataList);
-  const styleArray: string[] = [
+  const styleArray = [
     'positive',
     'severe',
     'death',
@@ -20,7 +21,7 @@ const Cards: React.FC = () => {
           return (
             <CardInfo
               key={index}
-              category={data.eachCategory}
+              category={categoriesObject[data.eachCategory]}
               count={data.latestCount}
               propStyle={styleArray[index]}
             />
