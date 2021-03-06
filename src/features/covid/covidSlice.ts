@@ -2,29 +2,103 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../../app/store';
 import dataObject from './dataObject.json';
+import categoriesObject from './categoriesObject.json';
+import dataLatestObject from './dataLatestObject.json';
 
-const apiUrl = 'https://api.opendata.go.jp/mhlw/death-cases';
+const apiUrl = 'https://api.opendata.go.jp/mhlw';
 
-type covidDataState = typeof dataObject;
+type covidDataObject = typeof dataObject;
+type categoriesObjectType = typeof categoriesObject;
+type covidDataLatestObject = typeof dataLatestObject;
+
+export type categoriesType = keyof categoriesObjectType;
+
+type latestDataState = {
+  eachCategory: categoriesType;
+  latestCount: string;
+};
+type latestDataListType = latestDataState[];
 
 type covidState = {
-  category: string;
-  data: covidDataState;
+  currentCategory: categoriesType;
+  currentData: covidDataObject;
+  latestDataList: latestDataListType;
 };
 
-const initialState: covidState = {
-  category: '',
-  data: dataObject,
-}
-;
+export const categoriesArray = Object.keys(
+  categoriesObject
+) as (keyof typeof categoriesObject)[];
 
-export const fetchAsyncGetDaily = createAsyncThunk(
-  'covid/getDaily',
-  async (category: string) => {
-    const { data } = await axios.get<covidDataState>(
-      `${apiUrl}/${category}?apiKey=${process.env.API_KEY}`
+const initialState: covidState = {
+  currentCategory: 'positive-cases',
+  currentData: dataObject,
+  latestDataList: [
+    {
+      eachCategory: 'severe-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'death-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'recovery-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'hospitalization-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'test-cases',
+      latestCount: '0',
+    },
+  ],
+};
+
+const moldApi = (data: covidDataLatestObject[]): covidDataObject => {
+  let jsonString = JSON.stringify(data);
+  jsonString = jsonString.replace(/"日付":/g, '"date":');
+  jsonString = jsonString.replace(
+    /PCR\s検査陽性者数\(単日\)|重症者数|死亡者数|退院、療養解除となった者|入院治療を要する者|PCR\s検査実施件数\(単日\)/g,
+    'count'
+  );
+  return JSON.parse(jsonString);
+};
+
+export const fetchAsyncGetData = createAsyncThunk(
+  'covid/getData',
+  async (category: categoriesType) => {
+    const { data } = await axios.get<covidDataLatestObject[]>(
+      `${apiUrl}/${category}?apikey=${process.env.REACT_APP_API_KEY}`
     );
-    return { category, data: data.splice(-7, 7) };
+    console.log(data);
+    const moldData: covidDataObject = moldApi(data.splice(-14, 14));
+    return { category, data: moldData };
+  }
+);
+
+export const fetchAsyncGetLatestData = createAsyncThunk(
+  'covid/getLatest',
+  async (argCategory: categoriesType) => {
+    const filterCategoriesArray = categoriesArray.filter(
+      (filterCategory) => argCategory !== filterCategory
+    );
+    const retStateList: Promise<latestDataState>[] = filterCategoriesArray.map(
+      async (mapCategory: categoriesType) => {
+        const { data } = await axios.get<covidDataLatestObject[]>(
+          `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_API_KEY}`
+        );
+        const moldData: covidDataObject = moldApi(data.splice(-1, 1));
+        const stateObject: latestDataState = {
+          eachCategory: mapCategory,
+          latestCount: moldData[0].count,
+        };
+        return stateObject;
+      }
+    );
+    const stateList = await Promise.all(retStateList);
+    return { stateList };
   }
 );
 
@@ -33,20 +107,32 @@ const covidSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchAsyncGetDaily.fulfilled, (state, action) => {
+    builder.addCase(fetchAsyncGetData.fulfilled, (state, action) => {
       return {
         ...state,
-        category: action.payload.category,
-        data: action.payload.data,
+        currentCategory: action.payload.category,
+        currentData: action.payload.data,
+      };
+    });
+    builder.addCase(fetchAsyncGetLatestData.fulfilled, (state, action) => {
+      return {
+        ...state,
+        latestDataList: action.payload.stateList,
       };
     });
   },
 });
 
-export const selectCategory: (state: RootState) => string = (state) =>
-  state.covid.category;
-export const selectData: (state: RootState) => covidDataState = (
+export const selectCurrentCategory: (state: RootState) => categoriesType = (
+  state
+) => state.covid.currentCategory;
+
+export const selectCurrentData: (state: RootState) => covidDataObject = (
   state: RootState
-) => state.covid.data;
+) => state.covid.currentData;
+
+export const selectLatestDataList: (state: RootState) => latestDataListType = (
+  state: RootState
+) => state.covid.latestDataList;
 
 export default covidSlice.reducer;
