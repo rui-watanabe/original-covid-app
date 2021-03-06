@@ -15,17 +15,27 @@ const useStyles = makeStyles((theme) => ({
 const SwitchCategory: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  type categoriesObjectType = typeof categoriesObject;
+  const reCategoriesObject = categoriesObject as categoriesObjectType;
   const categories = Object.values(
     categoriesObject
   ) as (keyof typeof categoriesObject)[];
+  type categoriesType = keyof typeof categoriesObject;
 
   return (
     <FormControl className={classes.formControl}>
       <NativeSelect
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          const eventValue = e.target.value as keyof typeof categoriesObject;
-          dispatch(fetchAsyncGetData(eventValue));
-          dispatch(fetchAsyncGetLatestData(eventValue));
+          const setEventValue = Object.keys(reCategoriesObject).filter(
+            (key) => {
+              return (
+                reCategoriesObject[key as categoriesType] === e.target.value
+              );
+            }
+          )[0] as categoriesType;
+
+          dispatch(fetchAsyncGetData(setEventValue));
+          dispatch(fetchAsyncGetLatestData(setEventValue));
         }}
       >
         {categories.map((category, i) => (

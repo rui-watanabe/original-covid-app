@@ -17,8 +17,6 @@ type CardProps = {
 };
 
 const CardInfo = ({ category, count, propStyle }: CardProps): JSX.Element => {
-  console.log(category);
-  console.log(propStyle);
   return (
     <>
       <Grid item xs={12} md={3} component={Card} className={styles[propStyle]}>

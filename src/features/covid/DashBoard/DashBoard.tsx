@@ -62,9 +62,6 @@ const DashBoard: React.FC = () => {
           <Grid item xs={12} md={12}>
             <Chart />
           </Grid>
-          {/* <Grid item xs={12} md={5}>
-            <PieChart />
-          </Grid> */}
         </Grid>
       </Container>
     </div>

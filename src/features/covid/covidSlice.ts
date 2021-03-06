@@ -18,7 +18,7 @@ type covidLatestDataState = {
 type covidLatestDataListState = covidLatestDataState[];
 
 type covidState = {
-  currentCategory: string;
+  currentCategory: categoriesType;
   currentData: covidDataState;
   latestDataList: covidLatestDataListState;
 };
@@ -32,11 +32,27 @@ type apiLatestType =
   | typeof dataLatestObject[5];
 
 const initialState: covidState = {
-  currentCategory: '',
+  currentCategory: 'positive-cases',
   currentData: dataObject,
   latestDataList: [
     {
-      eachCategory: 'positive-cases',
+      eachCategory: 'severe-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'death-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'recovery-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'hospitalization-cases',
+      latestCount: '0',
+    },
+    {
+      eachCategory: 'test-cases',
       latestCount: '0',
     },
   ],
@@ -54,11 +70,11 @@ const moldApi = (data: apiLatestType[]): covidDataState => {
 
 export const fetchAsyncGetData = createAsyncThunk(
   'covid/getData',
-  async (category: string) => {
+  async (category: categoriesType) => {
     const { data } = await axios.get<apiLatestType[]>(
       `${apiUrl}/${category}?apikey=${process.env.REACT_APP_API_KEY}`
     );
-    const moldData: covidDataState = moldApi(data.splice(-7, 7));
+    const moldData: covidDataState = moldApi(data.splice(-14, 14));
     return { category, data: moldData };
   }
 );
@@ -70,10 +86,10 @@ export const fetchAsyncGetLatestData = createAsyncThunk(
     const categoriesArray = Object.keys(
       categoriesObject
     ) as (keyof typeof categoriesObject)[];
-    const filterCategoriesArray = await categoriesArray.filter(
+    const filterCategoriesArray = categoriesArray.filter(
       (filterCategory) => argCategory !== filterCategory
     );
-    const retStateList: Promise<covidLatestDataState>[] = await filterCategoriesArray.map(
+    const retStateList: Promise<covidLatestDataState>[] = filterCategoriesArray.map(
       async (mapCategory: categoriesType) => {
         const { data } = await axios.get<apiLatestType[]>(
           `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_API_KEY}`
@@ -112,8 +128,9 @@ const covidSlice = createSlice({
   },
 });
 
-export const selectCurrentCategory: (state: RootState) => string = (state) =>
-  state.covid.currentCategory;
+export const selectCurrentCategory: (state: RootState) => categoriesType = (
+  state
+) => state.covid.currentCategory;
 
 export const selectCurrentData: (state: RootState) => covidDataState = (
   state: RootState
