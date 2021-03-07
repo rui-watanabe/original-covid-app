@@ -8,6 +8,9 @@
 - TypeScript<br>
 Reactの型定義のために利用
 
+- Redux Toolkit<br>
+状態管理にはRedux Toolkitを使用
+
 - Firebase<br>
 デプロイ先
 
