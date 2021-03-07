@@ -2,19 +2,19 @@
 全国コロナ感染者 ライブダッシュボード
 
 # Architecture
-- React
+- React<br>
 フロントエンドにReactを選択しSPA化
 
-- TypeScript
+- TypeScript<br>
 Reactの型定義のために利用
 
-- Firebase
+- Firebase<br>
 デプロイ先
 
-- Material UI
+- Material UI<br>
 デザインツールのライブラリー
 
-- Chart.js
+- Chart.js<br>
 グラフ描画のライブラリー    
 
 # DEMO
