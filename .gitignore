@@ -24,4 +24,4 @@ yarn-error.log*
 
 .history
 .env
-.fireabase
+.firebase
