@@ -10,7 +10,7 @@ const Cards: React.FC = () => {
   const latestDataList = useSelector(selectLatestDataList);
   return (
     <div className={styles.container}>
-      <Grid container spacing={1} justify="center">
+      <Grid container spacing={5} justify="center">
         {latestDataList.map(
           (data, index): JSX.Element => {
             return (

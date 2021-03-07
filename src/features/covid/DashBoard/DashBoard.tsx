@@ -12,6 +12,7 @@ import styles from './DashBoard.module.css';
 import {
   fetchAsyncGetData,
   fetchAsyncGetLatestData,
+  selectCurrentCategoryFlg,
   selectCurrentData,
 } from '../covidSlice';
 import SwitchCategory from '../SwitchCategory/SwitchCategory';
@@ -29,10 +30,14 @@ const DashBoard: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const currentDataList = useSelector(selectCurrentData);
+  const categoryFlg = useSelector(selectCurrentCategoryFlg);
+  const loadDate = new Date(
+    currentDataList[currentDataList.length - 1].date
+  ).toLocaleDateString();
 
   useEffect(() => {
     dispatch(fetchAsyncGetData('positive-cases'));
-    dispatch(fetchAsyncGetLatestData('positive-cases'));
+    dispatch(fetchAsyncGetLatestData());
   }, [dispatch]);
 
   return (
@@ -44,9 +49,7 @@ const DashBoard: React.FC = () => {
           </Typography>
           <div>
             <Typography variant="body1">
-              {new Date(
-                currentDataList[currentDataList.length - 1].date
-              ).toLocaleDateString()}
+              {loadDate}
               更新
             </Typography>
           </div>
@@ -54,14 +57,11 @@ const DashBoard: React.FC = () => {
       </AppBar>
       <Container className={classes.content}>
         <div className={styles.container}>
-          <SwitchCategory />
+          <SwitchCategory loadDate={loadDate} />
         </div>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12}>
-            <Cards />
-          </Grid>
-          <Grid item xs={12} md={12}>
-            <Chart />
+            {categoryFlg === 1 ? <Chart /> : <Cards />}
           </Grid>
         </Grid>
       </Container>
