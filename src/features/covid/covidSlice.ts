@@ -20,16 +20,20 @@ type latestDataState = {
 type latestDataListType = latestDataState[];
 
 type covidState = {
+  currentCategoryFlg: number;
   currentCategory: categoriesType;
   currentData: covidDataObject;
   latestDataList: latestDataListType;
 };
 
-export const categoriesArray = Object.keys(
+const categoriesKeysArray = Object.keys(
   categoriesObject
 ) as (keyof typeof categoriesObject)[];
 
+export const categoriesValuesArray = Object.values(categoriesObject);
+
 const initialState: covidState = {
+  currentCategoryFlg: 1,
   currentCategory: 'positive-cases',
   currentData: dataObject,
   latestDataList: [
@@ -72,7 +76,6 @@ export const fetchAsyncGetData = createAsyncThunk(
     const { data } = await axios.get<covidDataLatestObject[]>(
       `${apiUrl}/${category}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
     );
-    console.log(data);
     const moldData: covidDataObject = moldApi(data.splice(-14, 14));
     return { category, data: moldData };
   }
@@ -80,11 +83,8 @@ export const fetchAsyncGetData = createAsyncThunk(
 
 export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
-  async (argCategory: categoriesType) => {
-    const filterCategoriesArray = categoriesArray.filter(
-      (filterCategory) => argCategory !== filterCategory
-    );
-    const retStateList: Promise<latestDataState>[] = filterCategoriesArray.map(
+  async () => {
+    const retStateList: Promise<latestDataState>[] = categoriesKeysArray.map(
       async (mapCategory: categoriesType) => {
         const { data } = await axios.get<covidDataLatestObject[]>(
           `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
@@ -110,6 +110,7 @@ const covidSlice = createSlice({
     builder.addCase(fetchAsyncGetData.fulfilled, (state, action) => {
       return {
         ...state,
+        currentCategoryFlg: 1,
         currentCategory: action.payload.category,
         currentData: action.payload.data,
       };
@@ -117,11 +118,15 @@ const covidSlice = createSlice({
     builder.addCase(fetchAsyncGetLatestData.fulfilled, (state, action) => {
       return {
         ...state,
+        currentCategoryFlg: 0,
         latestDataList: action.payload.stateList,
       };
     });
   },
 });
+
+export const selectCurrentCategoryFlg: (state: RootState) => number = (state) =>
+  state.covid.currentCategoryFlg;
 
 export const selectCurrentCategory: (state: RootState) => categoriesType = (
   state

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { NativeSelect, FormControl } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import {
-  categoriesArray,
+  categoriesValuesArray,
   categoriesType,
   fetchAsyncGetData,
   fetchAsyncGetLatestData,
@@ -17,22 +17,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SwitchCategory: React.FC = () => {
+type SwitchCategoryProps = {
+  loadDate: string;
+};
+
+const SwitchCategory: React.FC<SwitchCategoryProps> = ({ loadDate }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const categories = [];
+  categories.push(`${loadDate} 感染データ`, ...categoriesValuesArray);
   return (
     <FormControl className={classes.formControl}>
       <NativeSelect
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          const setEventValue = Object.keys(categoriesObject).filter((key) => {
-            return categoriesObject[key as categoriesType] === e.target.value;
-          })[0] as categoriesType;
-
-          dispatch(fetchAsyncGetData(setEventValue));
-          dispatch(fetchAsyncGetLatestData(setEventValue));
+          const setKey = e.target.options.selectedIndex;
+          if (setKey === 0) {
+            dispatch(fetchAsyncGetLatestData());
+          } else {
+            const setEventValue = Object.keys(categoriesObject).filter(
+              (key) => {
+                return (
+                  categoriesObject[key as categoriesType] === e.target.value
+                );
+              }
+            )[0] as categoriesType;
+            dispatch(fetchAsyncGetData(setEventValue));
+          }
         }}
       >
-        {categoriesArray.map((category, i) => (
+        {categories.map((category, i) => (
           <option key={i} value={category}>
             {category}
           </option>
