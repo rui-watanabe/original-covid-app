@@ -23,26 +23,21 @@ jobs:
       - name: Install Dependencies
         run: |
           yarn install
-        working-directory: app
 
       - name: Build
         run: |
           yarn build
-        working-directory: app
 
       - name: Test
         run: |
           yarn test aqC
-        working-directory: app
 
       - name: Install Firebase Tools
         run: |
           npm install -g firebase-tools
-        working-directory: app
 
       - name: Deploy
         env:
           FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}
         run: |
           firebase deploy --project original-covid-app --token $FIREBASE_TOKEN_PROD
-        working-directory: app
