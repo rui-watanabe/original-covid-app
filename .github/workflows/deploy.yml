@@ -30,7 +30,7 @@ jobs:
 
       - name: Test
         run: |
-          yarn test aqC
+          yarn test a
 
       - name: Install Firebase Tools
         run: |
